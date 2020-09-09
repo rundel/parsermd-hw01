@@ -18,6 +18,7 @@ jobs:
     - name: Check Structure
       run: |
         library(parsermd)
+        library(magrittr)
 
         tmpl = parse_rmd("https://raw.githubusercontent.com/rundel/parsermd-hw01/master/hw01.Rmd") %>%
           rmd_subset(rmd, sec_refs = c("Exercise *", "Solution")) %>%
