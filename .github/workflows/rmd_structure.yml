@@ -21,7 +21,7 @@ jobs:
         library(magrittr)
 
         tmpl = parse_rmd("https://raw.githubusercontent.com/rundel/parsermd-hw01/master/hw01.Rmd") %>%
-          rmd_subset(rmd, sec_refs = c("Exercise *", "Solution")) %>%
+          rmd_subset(sec_refs = c("Exercise *", "Solution")) %>%
           rmd_subset(sec_refs = c("Exercise 3", "Solution"), type_refs = "rmd_markdown", exclude = TRUE) %>%
           rmd_template(keep_content = TRUE)
 
