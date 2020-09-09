@@ -1,0 +1,23 @@
+on: 
+  push:
+    paths:
+    - 'hw0.Rmd'
+name: Check Rmd Structure
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/statprog-s1-2020/hw0-docker:latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+    - name: Check Structure
+      run: |
+        rmd = parsermd::parse_rmd("https://raw.githubusercontent.com/statprog-s1-2020/hw0/master/hw0.Rmd")
+        rmd = parsermd::rmd_subset(rmd, sec_refs = "Task *", name_refs = c("fizzbuzz", "good_inputs", "bad_inputs"))
+        tpl = parsermd::rmd_template(rmd, inc_content = TRUE)
+        
+        checklist::quit_on_failure({
+          parsermd::rmd_check_template("hw0.Rmd", tpl)
+        })
+      shell: Rscript {0}
