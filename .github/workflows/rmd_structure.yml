@@ -1,23 +1,30 @@
-on: 
+on:
   push:
     paths:
-    - 'hw0.Rmd'
+    - 'hw01.Rmd'
 name: Check Rmd Structure
 jobs:
   test:
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/statprog-s1-2020/hw0-docker:latest
+      image: rocker/r-bspm:20.04
     steps:
     - name: Checkout
       uses: actions/checkout@master
+    - name: Install Packages
+      run: |
+        install2.r magrittr
+        installGithub.r rundel/parsermd rundel/checklist
     - name: Check Structure
       run: |
-        rmd = parsermd::parse_rmd("https://raw.githubusercontent.com/statprog-s1-2020/hw0/master/hw0.Rmd")
-        rmd = parsermd::rmd_subset(rmd, sec_refs = "Task *", name_refs = c("fizzbuzz", "good_inputs", "bad_inputs"))
-        tpl = parsermd::rmd_template(rmd, inc_content = TRUE)
-        
+        library(parsermd)
+
+        tmpl = parse_rmd("https://raw.githubusercontent.com/rundel/parsermd-hw01/master/hw01.Rmd") %>%
+          rmd_subset(rmd, sec_refs = c("Exercise *", "Solution")) %>%
+          rmd_subset(sec_refs = c("Exercise 3", "Solution"), type_refs = "rmd_markdown", exclude = TRUE) %>%
+          rmd_template(keep_content = TRUE)
+
         checklist::quit_on_failure({
-          parsermd::rmd_check_template("hw0.Rmd", tpl)
+          parsermd::rmd_check_template("hw01.Rmd", tmpl)
         })
       shell: Rscript {0}
